@@ -219,12 +219,13 @@ export async function getServerSideProps(context) {
   const { client } = await connectToDatabase();
 
   const isConnected = await client.isConnected();
-  const port = process.env.PORT || 3000;
-
-  const properties = await fetch(`http://localhost:${port}/api/properties`);
+  const port = 3000;
+  const url =
+    process.env.NODE_ENV === "development"
+      ? `http://localhost:${port}`
+      : "https://next-mongo-db.vercel.app";
+  const properties = await fetch(`${url}/api/properties`);
   const res = await properties.json();
-  const result = res.map((response) => response.images.picture_url);
-  console.log(result.length);
 
   return {
     props: {
