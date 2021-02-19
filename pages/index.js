@@ -219,16 +219,9 @@ export async function getServerSideProps(context) {
   const { client } = await connectToDatabase();
 
   const isConnected = await client.isConnected();
+  const port = process.env.PORT || 3000;
 
-  const dummyProps = [
-    {
-      _id: 1234,
-      summary:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam quod itaque unde, molestiae perspiciatis autem, rem aut dolores pariatur saepe consequatur vel. Doloremque qui eveniet rem omnis. Maiores voluptates ex vitae ipsa tenetur quas, fuga dignissimos exercitationem inventore facere eos libero nam illo esse officiis blanditiis quos at. Aspernatur minima optio obcaecati ipsam vero distinctio blanditiis fuga recusandae temporibus id hic, itaque molestiae excepturi, neque fugit quas. Tenetur tempora adipisci assumenda temporibus, magni repellat libero vitae, nisi perferendis dolores voluptate maxime similique nihil esse! Libero totam ducimus laudantium porro ullam, illum, commodi facere enim, perspiciatis labore ab dolorum quis vel!",
-      name: "Mysuru Majestic house",
-    },
-  ];
-  const properties = await fetch("http://localhost:3000/api/properties");
+  const properties = await fetch(`ttp://localhost:${port}/api/properties`);
   const res = await properties.json();
   const result = res.map((response) => response.images.picture_url);
   console.log(result.length);
