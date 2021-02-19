@@ -221,7 +221,7 @@ export async function getServerSideProps(context) {
   const isConnected = await client.isConnected();
   const port = process.env.PORT || 3000;
 
-  const properties = await fetch(`ttp://localhost:${port}/api/properties`);
+  const properties = await fetch(`http://localhost:${port}/api/properties`);
   const res = await properties.json();
   const result = res.map((response) => response.images.picture_url);
   console.log(result.length);
