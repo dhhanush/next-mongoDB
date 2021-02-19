@@ -1,7 +1,8 @@
-import Head from 'next/head'
-import { connectToDatabase } from '../util/mongodb'
+import Head from "next/head";
+import Link from "next/link";
+import { connectToDatabase } from "../util/mongodb";
 
-export default function Home({ isConnected }) {
+export default function Home({ properties, isConnected }) {
   return (
     <div className="container">
       <Head>
@@ -15,46 +16,32 @@ export default function Home({ isConnected }) {
         </h1>
 
         {isConnected ? (
-          <h2 className="subtitle">You are connected to MongoDB</h2>
+          <h1 className="subtitle">Server rendered app</h1>
         ) : (
           <h2 className="subtitle">
-            You are NOT connected to MongoDB. Check the <code>README.md</code>{' '}
+            You are NOT connected to MongoDB. Check the <code>README.md</code>{" "}
             for instructions.
           </h2>
         )}
 
         <p className="description">
-          Get started by editing <code>pages/index.js</code>
+          <code>This app uses monogoDB example data</code>
         </p>
 
         <div className="grid">
-          <a href="https://nextjs.org/docs" className="card">
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
+          {properties.map(({ _id, name, summary, listing_url, images }) => (
+            <a key={_id} href={listing_url} className="card">
+              <h3>{name}</h3>
+              <div className="img">
+                <img src={images.picture_url} alt={name} />
+              </div>
 
-          <a href="https://nextjs.org/learn" className="card">
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className="card"
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="card"
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+              <p>
+                {summary ||
+                  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam odit fugiat cupiditate autem laborum placeat deserunt maxime porro expedita quis. Voluptas, perspiciatis quo accusamus nemo deleniti fugiat quod nulla assumenda!"}
+              </p>
+            </a>
+          ))}
         </div>
       </main>
 
@@ -64,7 +51,7 @@ export default function Home({ isConnected }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <img src="/vercel.svg" alt="Vercel Logo" className="logo" />
         </a>
       </footer>
@@ -196,9 +183,15 @@ export default function Home({ isConnected }) {
           height: 1em;
         }
 
+        .img img {
+          width: 100%;
+          height: auto;
+        }
+
         @media (max-width: 600px) {
           .grid {
             width: 100%;
+            height: auto;
             flex-direction: column;
           }
         }
@@ -219,15 +212,31 @@ export default function Home({ isConnected }) {
         }
       `}</style>
     </div>
-  )
+  );
 }
 
 export async function getServerSideProps(context) {
-  const { client } = await connectToDatabase()
+  const { client } = await connectToDatabase();
 
-  const isConnected = await client.isConnected()
+  const isConnected = await client.isConnected();
+
+  const dummyProps = [
+    {
+      _id: 1234,
+      summary:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam quod itaque unde, molestiae perspiciatis autem, rem aut dolores pariatur saepe consequatur vel. Doloremque qui eveniet rem omnis. Maiores voluptates ex vitae ipsa tenetur quas, fuga dignissimos exercitationem inventore facere eos libero nam illo esse officiis blanditiis quos at. Aspernatur minima optio obcaecati ipsam vero distinctio blanditiis fuga recusandae temporibus id hic, itaque molestiae excepturi, neque fugit quas. Tenetur tempora adipisci assumenda temporibus, magni repellat libero vitae, nisi perferendis dolores voluptate maxime similique nihil esse! Libero totam ducimus laudantium porro ullam, illum, commodi facere enim, perspiciatis labore ab dolorum quis vel!",
+      name: "Mysuru Majestic house",
+    },
+  ];
+  const properties = await fetch("http://localhost:3000/api/properties");
+  const res = await properties.json();
+  const result = res.map((response) => response.images.picture_url);
+  console.log(result.length);
 
   return {
-    props: { isConnected },
-  }
+    props: {
+      properties: res,
+      isConnected,
+    },
+  };
 }
