@@ -223,7 +223,7 @@ export async function getServerSideProps(context) {
   const url =
     process.env.NODE_ENV === "development"
       ? `http://localhost:${port}`
-      : "https://next-mongo-db.vercel.app";
+      : "https://1337.vercel.app";
   const properties = await fetch(`${url}/api/properties`);
   const res = await properties.json();
 
